@@ -1,0 +1,49 @@
+{
+  "name": "@thomascube/postman-sync",
+  "description": "A CLI tool to sync a Postman workspace with a local directory",
+  "version": "0.1.0",
+  "license": "MIT",
+  "homepage": "https://github.com/thomascube/postman-sync",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thomascube/postman-sync"
+  },
+  "keywords": [
+    "postman",
+    "cli",
+    "api"
+  ],
+  "bin": {
+    "pms": "./index.js",
+    "postman-sync": "./index.js"
+  },
+  "scripts": {
+    "build": "webpack",
+    "setup": "babel-node index.js setup",
+    "pull": "babel-node index.js pull",
+    "push": "babel-node index.js update"
+  },
+  "engines": {
+    "node": ">=12.20.0"
+  },
+  "dependencies": {
+    "axios": "^0.19.0",
+    "chalk": "^2.4.2",
+    "commander": "^4.0.1",
+    "detective": "^5.2.0",
+    "enquirer": "^2.3.2",
+    "jsum": "^0.1.4",
+    "lodash": "^4.17.20"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.12.10",
+    "@babel/core": "^7.12.10",
+    "@babel/node": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
+    "babel-loader": "^8.2.2",
+    "regenerator-runtime": "^0.13.7",
+    "standard": "^14.3.1",
+    "webpack": "^5.12.3",
+    "webpack-cli": "^4.3.1"
+  }
+}
