@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import { find } from 'lodash'
 
 export default class CollectionModel {
   constructor(data) {
@@ -12,7 +12,7 @@ export default class CollectionModel {
   }
 
   getItemById(id) {
-    return _.find(this.items, (item) => item._postman_id === id)
+    return find(this.items, (item) => item._postman_id === id)
   }
 
   addItem(item) {

@@ -1,13 +1,13 @@
-const fs = require('fs')
-const path = require('path')
-const config = require('./config')
-const log = require('./log')
+import fs from 'fs'
+import path from 'path'
+import config from './config'
+import log from './log'
 
 function getFilename(name, type) {
   return `${name}.${type}.json`.replace(' ', '-')
 }
 
-module.exports = {
+export default {
   collection: {
     read: () => {
       try {

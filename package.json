@@ -19,9 +19,9 @@
   },
   "scripts": {
     "build": "webpack",
-    "setup": "babel-node index.js setup",
-    "pull": "babel-node index.js pull",
-    "push": "babel-node index.js update"
+    "setup": "babel-node src/index.js setup",
+    "pull": "babel-node src/index.js pull",
+    "push": "babel-node src/index.js push"
   },
   "engines": {
     "node": ">=12.20.0"

@@ -1,11 +1,11 @@
-const chalk = require('chalk')
+import chalk from 'chalk'
 
-module.exports = {
+export default {
   info: (msg) => {
     console.log('💭', chalk.cyan(msg))
   },
   success: (msg) => {
-    console.log('🚀', chalk.green(msg))
+    console.log(chalk.green('✔'), chalk.green(msg))
   },
   error: (msg) => {
     console.log('💥', chalk.red(msg))

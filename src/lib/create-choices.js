@@ -1,3 +1,3 @@
-module.exports = function createChoices (arr) {
+export default function createChoices (arr) {
   return arr.map(({ name, id, uid }) => { return { name, value: uid || id } })
 }

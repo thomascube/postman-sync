@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import axios from 'axios'
 import config from './lib/config'
-import constants from './lib/constants'
+import { POSTMAN_API_BASE } from './lib/constants'
 import file from './lib/file'
 import log from './lib/log'
 import { mergeCollection, mergeEnvironment } from './lib/merge-tool'
@@ -35,7 +35,7 @@ export default async function pull () {
 
 async function writeEnvironment (id, local, POSTMAN_API_KEY) {
   const apiKeyParam = `?apikey=${POSTMAN_API_KEY}`
-  const environment = await axios.get(`${constants.POSTMAN_API_BASE}/environments/${id}/${apiKeyParam}`)
+  const environment = await axios.get(`${POSTMAN_API_BASE}/environments/${id}/${apiKeyParam}`)
 
   if (local) {
     await mergeEnvironment(local, environment.data.environment)

@@ -1,9 +1,9 @@
-const fs = require('fs')
-const path = require('path')
-const log = require('./log')
-const { CONFIG_FILENAME } = require('./constants')
+import fs from 'fs'
+import path from 'path'
+import log from './log'
+import { CONFIG_FILENAME } from './constants'
 
-module.exports = {
+export default {
   get: function () {
     try {
       const data = fs.readFileSync(path.resolve(process.cwd(), CONFIG_FILENAME))

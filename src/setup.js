@@ -1,9 +1,9 @@
-const axios = require('axios')
-const { prompt } = require('enquirer')
-const config = require('./lib/config')
-const createChoices = require('./lib/create-choices')
-const log = require('./lib/log')
-const { POSTMAN_API_BASE } = require('./lib/constants')
+import axios from 'axios'
+import { prompt } from 'enquirer'
+import config from './lib/config'
+import createChoices from './lib/create-choices'
+import log from './lib/log'
+import { POSTMAN_API_BASE } from './lib/constants'
 
 export default async function setup () {
   const apiKey = await prompt({
