@@ -27,7 +27,7 @@
     "node": ">=12.20.0"
   },
   "dependencies": {
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "chalk": "^2.4.2",
     "commander": "^4.0.1",
     "detective": "^5.2.0",
