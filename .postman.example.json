@@ -1,9 +1,11 @@
 {
   "POSTMAN_API_KEY": "<api key here>",
   "POSTMAN_WORKSPACE_ID": "<workspace ID here>",
-  "POSTMAN_COLLECTION_ID": "<collection ID here>",
-  "POSTMAN_COLLECTION_FILENAME": "<collection filename here>",
+  "POSTMAN_DIR": "<directory name here>",
   "POSTMAN_ENVIRONMENTS": {
-    "<environment name here>": "<environment ID here>"
+    "<environment ID>": "<environment name>"
+  },
+  "POSTMAN_COLLECTIONS": {
+    "<colelction ID here>": "<collection name>"
   }
 }

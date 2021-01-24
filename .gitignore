@@ -1,3 +1,4 @@
 node_modules
 .postman.json
+.postman.storage.json
 *.postman_*.json

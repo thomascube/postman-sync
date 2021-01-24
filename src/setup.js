@@ -1,4 +1,5 @@
 import axios from 'axios'
+import fs from 'fs'
 import { prompt } from 'enquirer'
 import config from './lib/config'
 import createChoices from './lib/create-choices'
@@ -6,10 +7,12 @@ import log from './lib/log'
 import { POSTMAN_API_BASE } from './lib/constants'
 
 export default async function setup () {
+  const oldKey = config.get().POSTMAN_API_KEY
   const apiKey = await prompt({
     type: 'password',
     name: 'value',
-    message: 'Enter your Postman API key'
+    message: 'Enter your Postman API key' + (oldKey ? ' (leave empty to keep stored key)' : ''),
+    initial: oldKey,
   })
 
   beginSetup(apiKey)
@@ -49,13 +52,23 @@ async function continueSetup (collectionList, apiKey, selectedWorkspaceId) {
   const apiKeyParam = `?apikey=${apiKey.value}`
   const collectionChoices = createChoices(collectionList)
 
-  const selectedCollection = await prompt({
-    name: 'id',
-    type: 'autocomplete',
-    message: 'Select the Collection you wish to work with',
-    limit: 10,
-    choices: collectionChoices
+  const selectedCollections = await prompt({
+    type: 'select',
+    name: 'list',
+    multiple: true,
+    message: 'Use SPACE to select the Collection(s) you wish to synchronize',
+    choices: collectionChoices,
+    initial: collectionChoices.map(({ name }) => name),
+    result (names) {
+      return names.reduce((acc, cur) => {
+        const match = collectionChoices.find(choice => choice.name === cur).value
+        acc[match] = cur
+        return acc
+      }, {})
+    }
   })
+
+  settings.POSTMAN_COLLECTIONS = selectedCollections.list
 
   const environmentList = await axios.get(`${POSTMAN_API_BASE}/workspaces/${selectedWorkspaceId}/${apiKeyParam}`)
   const envs = environmentList.data.workspace.environments
@@ -72,15 +85,15 @@ async function continueSetup (collectionList, apiKey, selectedWorkspaceId) {
 
       const selectedEnvironments = await prompt({
         name: 'list',
-        type: 'autocomplete',
+        type: 'select',
         multiple: true,
-        message: 'Use SPACE to Select the Environment(s) you wish to work with',
-        limit: 10,
+        message: 'Use SPACE to select the Environment(s) you wish to synchronize',
         choices: environmentChoices,
+        initial: environmentChoices.map(({ name }) => name),
         result (names) {
           return names.reduce((acc, cur) => {
             const match = environmentChoices.find(choice => choice.name === cur).value
-            acc[cur] = match
+            acc[match] = cur
             return acc
           }, {})
         }
@@ -90,10 +103,28 @@ async function continueSetup (collectionList, apiKey, selectedWorkspaceId) {
     }
   }
 
+  const directory = await prompt({
+    type: 'input',
+    name: 'name',
+    initial: config.get().POSTMAN_DIR || '.',
+    message: 'Enter directory for Postman files'
+  })
+
+  try {
+    await fs.promises.access(directory.name, fs.constants.O_DIRECTORY)
+  } catch (e) {
+    try {
+      await fs.promises.mkdir(directory.name, { recursive: true })
+      log.info(`Postman directory '${directory.name}' created`)
+    } catch (e) {
+      log.error(`Postman directory '${directory.name}' does not exist and could not be created`)
+    }
+  }
+
   Object.assign(settings, {
     POSTMAN_API_KEY: apiKey.value,
-    POSTMAN_COLLECTION_ID: selectedCollection.id,
     POSTMAN_WORKSPACE_ID: selectedWorkspaceId,
+    POSTMAN_DIR: directory.name
   })
 
   config.set(settings, { log: true })

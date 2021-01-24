@@ -23,7 +23,7 @@ export default {
       fs.writeFileSync(CONFIG_FILENAME, JSON.stringify(settings, null, 2))
 
       if (shouldLog) {
-        log.success('Postman CLI config saved!')
+        log.success('Postman Sync config saved!')
       }
     } catch (e) {
       log.error(`Failed to write ${CONFIG_FILENAME} config file!`)

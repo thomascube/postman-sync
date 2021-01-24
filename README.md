@@ -42,7 +42,35 @@ Use `pms --help` to see all commands.
 
 ## Example workflow
 
-...
+In a project checkout...
+
+### Connect the local checkout with your Postman worksapce
+
+1. Select collections and environments:
+   `postman-sync setup`
+
+2. Fetch collections and environments:
+   `postman-sync pull`
+
+3. Store Postman files in your Git repository:
+   `git add <postman-directory>/*.json`
+   `git commit`
+
+### Synchronize your Postman worksapce with the Git repository
+
+1. Fetch from Git:
+   `git pull`
+
+2. Pull and merge your Postman worksapce:
+   `postman-sync pull`
+
+3. Commit Postman changed to your Git repository:
+   `git add <postman-directory>/*.json`
+   `git commit`
+
+4. Push collections and environemtns from Git to your Postman worksapce:
+   `postman-sync push`
+
 
 ## Thanks
 

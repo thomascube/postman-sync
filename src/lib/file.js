@@ -4,25 +4,30 @@ import config from './config'
 import log from './log'
 
 function getFilename(name, type) {
-  return `${name}.${type}.json`.replace(' ', '-')
+  const { POSTMAN_DIR } = config.get()
+  return `${POSTMAN_DIR}/${name}.${type}.json`.replace(' ', '-')
 }
 
 export default {
   collection: {
-    read: () => {
+    read: (uuid) => {
       try {
-        const { POSTMAN_COLLECTION_FILENAME } = config.get()
-        const collection = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), POSTMAN_COLLECTION_FILENAME)));
-
+        const { POSTMAN_COLLECTIONS } = config.get()
+        const collectionFilename = getFilename(POSTMAN_COLLECTIONS[uuid], 'postman_collection')
+        const collection = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), collectionFilename)));
 
         return collection
       } catch (e) {}
     },
     write: (collection) => {
-      try {
-        const filename = getFilename(collection.info.name, 'postman_collection')
+      const { POSTMAN_COLLECTIONS } = config.get()
 
-        config.set({ POSTMAN_COLLECTION_FILENAME: filename }, { merge: true })
+      try {
+        const uuid = collection.info._postman_id
+        const filename = getFilename(POSTMAN_COLLECTIONS[uuid] || collection.info.name, 'postman_collection')
+
+        // TODO: rename file if collection name changed
+
         fs.writeFileSync(filename, JSON.stringify(collection, null, 2))
         log.success(`Postman collection written to ${filename}!`)
       } catch (e) {
@@ -35,7 +40,7 @@ export default {
       try {
         const { POSTMAN_ENVIRONMENTS } = config.get()
 
-        return Object.keys(POSTMAN_ENVIRONMENTS).map((name) => {
+        return Object.values(POSTMAN_ENVIRONMENTS).map((name) => {
           const filename = getFilename(name, 'postman_environment')
           return JSON.parse(fs.readFileSync(path.resolve(process.cwd(), filename)));
         })
