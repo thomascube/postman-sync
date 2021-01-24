@@ -7,7 +7,7 @@ import log from './lib/log'
 import { POSTMAN_API_BASE } from './lib/constants'
 
 export default async function setup () {
-  const oldKey = config.get().POSTMAN_API_KEY
+  const oldKey = config.get(true).POSTMAN_API_KEY
   const apiKey = await prompt({
     type: 'password',
     name: 'value',
@@ -51,6 +51,7 @@ async function continueSetup (collectionList, apiKey, selectedWorkspaceId) {
   const settings = {}
   const apiKeyParam = `?apikey=${apiKey.value}`
   const collectionChoices = createChoices(collectionList)
+  const previouslySelectedCollections = config.get(true).POSTMAN_COLLECTIONS || {}
 
   const selectedCollections = await prompt({
     type: 'select',
@@ -58,7 +59,7 @@ async function continueSetup (collectionList, apiKey, selectedWorkspaceId) {
     multiple: true,
     message: 'Use SPACE to select the Collection(s) you wish to synchronize',
     choices: collectionChoices,
-    initial: collectionChoices.map(({ name }) => name),
+    initial: Object.values(previouslySelectedCollections),
     result (names) {
       return names.reduce((acc, cur) => {
         const match = collectionChoices.find(choice => choice.name === cur).value
@@ -82,6 +83,7 @@ async function continueSetup (collectionList, apiKey, selectedWorkspaceId) {
 
     if (fetchEnvironment.value) {
       const environmentChoices = createChoices(envs)
+      const previouslySelectedEnvironments = config.get(true).POSTMAN_ENVIRONMENTS || {}
 
       const selectedEnvironments = await prompt({
         name: 'list',
@@ -89,7 +91,7 @@ async function continueSetup (collectionList, apiKey, selectedWorkspaceId) {
         multiple: true,
         message: 'Use SPACE to select the Environment(s) you wish to synchronize',
         choices: environmentChoices,
-        initial: environmentChoices.map(({ name }) => name),
+        initial: Object.values(previouslySelectedEnvironments),
         result (names) {
           return names.reduce((acc, cur) => {
             const match = environmentChoices.find(choice => choice.name === cur).value
@@ -106,7 +108,7 @@ async function continueSetup (collectionList, apiKey, selectedWorkspaceId) {
   const directory = await prompt({
     type: 'input',
     name: 'name',
-    initial: config.get().POSTMAN_DIR || '.',
+    initial: config.get(true).POSTMAN_DIR || '.',
     message: 'Enter directory for Postman files'
   })
 

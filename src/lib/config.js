@@ -4,14 +4,18 @@ import log from './log'
 import { CONFIG_FILENAME } from './constants'
 
 export default {
-  get: function () {
+  get: function (graceful = false) {
     try {
       const data = fs.readFileSync(path.resolve(process.cwd(), CONFIG_FILENAME))
       return JSON.parse(data);
     } catch (e) {
-      console.error(e)
-      log.error(`No/invalid ${CONFIG_FILENAME} file found! Run postman setup.`)
-      process.exit(1)
+      if (!graceful) {
+        console.error(e)
+        log.error(`No/invalid ${CONFIG_FILENAME} file found! Run postman setup.`)
+        process.exit(1)
+      }
+
+      return {}
     }
   },
   set: function (config, options) {
