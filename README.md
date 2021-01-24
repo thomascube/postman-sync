@@ -46,30 +46,34 @@ In a project checkout...
 
 ### Connect the local checkout with your Postman worksapce
 
-1. Select collections and environments:
-   `postman-sync setup`
+1. Install `postman-sync` via npm:  
+`npm install thomascube/postman-sync`  
+`export PATH=./node_modules/.bin:$PATH`  
 
-2. Fetch collections and environments:
-   `postman-sync pull`
+2. Select collections and environments:  
+`postman-sync setup`  
 
-3. Store Postman files in your Git repository:
-   `git add <postman-directory>/*.json`
-   `git commit`
+3. Fetch collections and environments:  
+`postman-sync pull`  
+
+4. Store Postman files in your Git repository:  
+   `git add <postman-directory>/*.json`  
+   `git commit`  
 
 ### Synchronize your Postman worksapce with the Git repository
 
-1. Fetch from Git:
-   `git pull`
+1. Fetch from Git:  
+`git pull`  
 
-2. Pull and merge your Postman worksapce:
-   `postman-sync pull`
+2. Pull and merge your Postman worksapce:  
+`postman-sync pull`  
 
-3. Commit Postman changed to your Git repository:
-   `git add <postman-directory>/*.json`
-   `git commit`
+3. Commit Postman changed to your Git repository:  
+`git add <postman-directory>/*.json`  
+`git commit`  
 
 4. Push collections and environemtns from Git to your Postman worksapce:
-   `postman-sync push`
+`postman-sync push`  
 
 
 ## Thanks
