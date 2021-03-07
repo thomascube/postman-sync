@@ -2,6 +2,7 @@
   "POSTMAN_API_KEY": "<api key here>",
   "POSTMAN_WORKSPACE_ID": "<workspace ID here>",
   "POSTMAN_DIR": "<directory name here>",
+  "POSTMAN_USERID": "<postman user ID>",
   "POSTMAN_ENVIRONMENTS": {
     "<environment ID>": "<environment name>"
   },

@@ -32,6 +32,10 @@ The process is interactive and the user can confirm each new or updated item to 
 
 Uploads the local copies of collections and environments to the Postman API and thus makes them immediately available in the Postman app.
 
+### `postman-sync add <filename>`
+
+Adds the given local file to the sync directory in order to upload it to the Postman worskpace on the next push.
+
 
 ## Other
 
@@ -75,6 +79,16 @@ In a project checkout...
 4. Push collections and environemtns from Git to your Postman worksapce:
 `postman-sync push`  
 
+### Import files from Git to your Postman workspace
+
+1. Connect Git checkout with your Postman workspace:  
+`postman-sync setup`  
+
+2. Add collection or environment file to sync:  
+`postman-sync add <file>`  
+
+4. Push collections and environments from Git to your Postman worksapce:
+`postman-sync push`  
 
 ## Thanks
 

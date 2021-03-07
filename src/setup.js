@@ -33,14 +33,7 @@ async function beginSetup (apiKey) {
     })
 
     const collections = await axios.get(`${POSTMAN_API_BASE}/workspaces/${selectedWorkspace.id}/${apiKeyParam}`)
-    const collectionList = collections.data.workspace.collections
-
-    if (collectionList) {
-      continueSetup(collectionList, apiKey, selectedWorkspace.id)
-    } else {
-      log.error('Workspace has no collections. Select another workspace.')
-      beginSetup(apiKey)
-    }
+    continueSetup(collections.data.workspace.collections, apiKey, selectedWorkspace.id)
   } catch (e) {
     log.error('Invalid Postman API key!')
     setup()
@@ -50,26 +43,31 @@ async function beginSetup (apiKey) {
 async function continueSetup (collectionList, apiKey, selectedWorkspaceId) {
   const settings = {}
   const apiKeyParam = `?apikey=${apiKey.value}`
-  const collectionChoices = createChoices(collectionList)
-  const previouslySelectedCollections = config.get(true).POSTMAN_COLLECTIONS || {}
 
-  const selectedCollections = await prompt({
-    type: 'select',
-    name: 'list',
-    multiple: true,
-    message: 'Use SPACE to select the Collection(s) you wish to synchronize',
-    choices: collectionChoices,
-    initial: Object.values(previouslySelectedCollections),
-    result (names) {
-      return names.reduce((acc, cur) => {
-        const match = collectionChoices.find(choice => choice.name === cur).value
-        acc[match] = cur
-        return acc
-      }, {})
-    }
-  })
+  if (collectionList) {
+    const collectionChoices = createChoices(collectionList)
+    const previouslySelectedCollections = config.get(true).POSTMAN_COLLECTIONS || {}
 
-  settings.POSTMAN_COLLECTIONS = selectedCollections.list
+    const selectedCollections = await prompt({
+      type: 'select',
+      name: 'list',
+      multiple: true,
+      message: 'Use SPACE to select the Collection(s) you wish to synchronize',
+      choices: collectionChoices,
+      initial: Object.values(previouslySelectedCollections),
+      result (names) {
+        return names.reduce((acc, cur) => {
+          const match = collectionChoices.find(choice => choice.name === cur).value
+          acc[match] = cur
+          return acc
+        }, {})
+      }
+    })
+
+    settings.POSTMAN_COLLECTIONS = selectedCollections.list
+  } else {
+    settings.POSTMAN_COLLECTIONS = {}
+  }
 
   const environmentList = await axios.get(`${POSTMAN_API_BASE}/workspaces/${selectedWorkspaceId}/${apiKeyParam}`)
   const envs = environmentList.data.workspace.environments
@@ -123,10 +121,13 @@ async function continueSetup (collectionList, apiKey, selectedWorkspaceId) {
     }
   }
 
+  const me = await axios.get(`${POSTMAN_API_BASE}/me/${apiKeyParam}`)
+
   Object.assign(settings, {
     POSTMAN_API_KEY: apiKey.value,
     POSTMAN_WORKSPACE_ID: selectedWorkspaceId,
-    POSTMAN_DIR: directory.name
+    POSTMAN_DIR: directory.name,
+    POSTMAN_USERID: me.data.user.id + ''
   })
 
   config.set(settings, { log: true })

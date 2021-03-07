@@ -9,6 +9,7 @@ function getFilename(name, type) {
 }
 
 export default {
+  getFilename: getFilename,
   collection: {
     read: (uuid) => {
       try {

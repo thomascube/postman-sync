@@ -21,7 +21,8 @@
     "build": "webpack",
     "setup": "babel-node src/index.js setup",
     "pull": "babel-node src/index.js pull",
-    "push": "babel-node src/index.js push"
+    "push": "babel-node src/index.js push",
+    "add": "babel-node src/index.js add"
   },
   "engines": {
     "node": ">=12.20.0"

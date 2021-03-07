@@ -7,15 +7,21 @@ import storage from './lib/storage'
 import { POSTMAN_API_BASE } from './lib/constants'
 
 async function updateCollection (id) {
-  const { POSTMAN_API_KEY } = config.get()
+  const { POSTMAN_API_KEY, POSTMAN_WORKSPACE_ID } = config.get()
   const collection = file.collection.read(id)
   const apiKeyParam = `?apikey=${POSTMAN_API_KEY}`
-  const collectionAddress = `${POSTMAN_API_BASE}/collections/${id}/${apiKeyParam}`
+  let collectionAddress = `${POSTMAN_API_BASE}/collections/${id}/${apiKeyParam}`
 
   // get etag from API and compare with local metadata
-  const head = await axios.head(collectionAddress)
-  const latestEtag = head.headers.etag || 'empty'
-  const metaData = storage.getItem(id)
+  let latestEtag;
+  try {
+    const head = await axios.head(collectionAddress)
+    latestEtag = head.headers.etag || 'empty'
+  } catch (err) {
+    latestEtag = 'notfound'
+  }
+
+  let metaData = storage.getItem(id) || {}
   let confirmMesage = `Overwrite the collection '${collection.info.name}' in your workspace. Are you sure?`;
   let abortMessage = null
 
@@ -31,7 +37,22 @@ async function updateCollection (id) {
   })
 
   if (confirm.pushcollection) {
-    await axios.put(collectionAddress, { collection })
+    // post as new collection
+    if (latestEtag === 'notfound') {
+      const created = await axios.post(`${POSTMAN_API_BASE}/collections/${apiKeyParam}&workspace=${POSTMAN_WORKSPACE_ID}`, { collection })
+
+      if (created.data.collection?.uid) {
+        id = created.data.collection.uid
+        collectionAddress = `${POSTMAN_API_BASE}/collections/${id}/${apiKeyParam}`
+        metaData = { lastPull: new Date() }
+      } else {
+        log.error(`Unexpected response for POST request: ${created.data}`)
+      }
+    } else {
+      // put updated collection
+      await axios.put(collectionAddress, { collection })
+    }
+
     log.success(`Pushed collection '${collection.info.name}' to Postman`)
 
     // update the stored etag after push
@@ -64,6 +85,7 @@ export default async function update () {
       })
 
       if (confirm.pushenvironment) {
+        // TODO: post new environment
         await axios.put(environmentAddress, { environment })
         log.success(`Pushed environment '${environment.name}' to Postman`)
       }
